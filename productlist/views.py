@@ -1,15 +1,9 @@
 from django.shortcuts import render
-from .models import Family, ProductList, Product, ProductItem
+from .models import ProductList, Product, ProductItem
 from rest_framework import viewsets
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
-# Create your views here.
-from .serializers import  FamilySerializer, ProductListSerializer, ProductSerializer, ProductItemSerializer
-
-
-class FamilyViewSet(viewsets.ModelViewSet):
-    queryset = Family.objects.all()
-    serializer_class = FamilySerializer
+from rest_framework.decorators import api_view
+from .serializers import ProductListSerializer, ProductSerializer, ProductItemSerializer
+from rest_framework import generics, permissions
 
 class ProductListViewSet(viewsets.ModelViewSet):
     queryset = ProductList.objects.all()
@@ -23,15 +17,29 @@ class ProductItemViewSet(viewsets.ModelViewSet):
     queryset = ProductItem.objects.all()
     serializer_class = ProductItemSerializer
     
-@require_GET
-def get_family_by_owner(request, owner_id):
-    try:
-        family = Family.objects.get(owner_id=owner_id)
-        # Assuming you have a serializer for your Family model
-        # Replace `FamilySerializer` with your actual serializer
-        serialized_family = FamilySerializer(family).data
-        return JsonResponse(serialized_family, status=200)
-    except Family.DoesNotExist:
-        return JsonResponse({'error': 'Family not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+class UserProductListView(generics.ListAPIView):
+    serializer_class = ProductListSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return ProductList.objects.filter(owner=user)
+
+
+
+class IsOwnerOrMember(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Пользователь является владельцем или участником списка продуктов
+        return obj.owner == request.user or request.user in obj.members.all()
+
+class ProductListDetailAPIView(generics.RetrieveAPIView):
+    queryset = ProductList.objects.all()
+    serializer_class = ProductListSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrMember] 
+
+    def get_object(self):
+        uid = self.kwargs['uid']
+        # Получение объекта ProductList по uid
+        obj = ProductList.objects.filter(uid=uid).first()
+        return obj
+    

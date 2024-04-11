@@ -1,27 +1,18 @@
 from django.db import models
 from uuid import uuid4
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-    
-
-        
-# Create your models here.
-class Family(models.Model):
-    uid = models.UUIDField(max_length=255, default=uuid4(), unique=True, verbose_name='Уникальный идентификатор')
-    owner = models.OneToOneField(User, verbose_name="Владелец семьи",  on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, verbose_name="Название Семьи")
-    
-    def __str__(self) -> str:
-        return f"Семья #{self.id} - '{self.name}'"
+import random, string
+import datetime
 
 class ProductList(models.Model):
-    family = models.ForeignKey(Family, related_name='product_lists',  on_delete=models.CASCADE)
-    products = models.ManyToManyField("Product", related_name='product_list')
+    products = models.ManyToManyField("ProductItem", related_name='product_list', blank=True, null=True)
     name = models.CharField(max_length=50, verbose_name='Название списка')
-    date_created = models.DateTimeField(auto_created=True, verbose_name="Дата создания")
+    date_created = models.DateTimeField(auto_created=True, default=datetime.datetime.now(), blank=True, verbose_name="Дата создания")
     date_updated = models.DateTimeField(auto_now_add=True, verbose_name="Дата обновления")
-
+    uid = models.CharField(max_length=100, verbose_name='Кастомная ссылка', blank=True, default=uuid4(), unique=True)
+    owner = models.ForeignKey(User, related_name='product_lists', on_delete=models.CASCADE)
+    members = models.ManyToManyField(User, related_name='shared_product_lists', blank=True)
+    
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Наименование товара")
     price = models.IntegerField(verbose_name="Цена товара")

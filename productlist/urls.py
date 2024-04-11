@@ -1,16 +1,16 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import get_family_by_owner, FamilyViewSet, ProductListViewSet, ProductViewSet, ProductItemViewSet
+from .views import ProductListViewSet, ProductViewSet, ProductItemViewSet, UserProductListView, ProductListDetailAPIView
 
 router = DefaultRouter()
-router.register(r'families', FamilyViewSet)
 router.register(r'productlists', ProductListViewSet)
 router.register(r'products', ProductViewSet)
 router.register(r'productitems', ProductItemViewSet)
 
+
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/family/<int:owner_id>/', get_family_by_owner, name='get_family_by_owner'),
-
+    path('user-product-lists/', UserProductListView.as_view(), name="user-product-lists"),
+    path('product-list/<str:uid>/', ProductListDetailAPIView.as_view(), name='product-list-detail'),
 ]
 

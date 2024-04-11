@@ -1,12 +1,6 @@
-from .models import Family, ProductList, Product, ProductItem
+from .models import ProductList, Product, ProductItem
 from rest_framework import serializers
 
-
-
-class FamilySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Family
-        fields = '__all__'
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductList

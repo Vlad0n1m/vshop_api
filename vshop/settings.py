@@ -25,7 +25,7 @@ SITE_ID = 1  # make sure SITE_ID is set
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['crvik.c-m.tech']
+ALLOWED_HOSTS = ['crvik.c-m.tech', '127.0.0.1']
 
 
 # Application definition
@@ -164,8 +164,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=99999),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=999999),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
