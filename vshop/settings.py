@@ -25,7 +25,7 @@ SITE_ID = 1  # make sure SITE_ID is set
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.141']
+ALLOWED_HOSTS = ['crvik.c-m.tech']
 
 
 # Application definition
