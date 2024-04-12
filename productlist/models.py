@@ -15,12 +15,11 @@ class ProductList(models.Model):
     
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Наименование товара")
-    price = models.IntegerField(verbose_name="Цена товара")
+    price = models.IntegerField(verbose_name="Цена товара", blank=True, null=True)
     origin = models.CharField(max_length=255, verbose_name='Провайдер', default='default')
     
 class ProductItem(models.Model):
     product = models.ForeignKey(Product, verbose_name='Товар',  on_delete=models.CASCADE)
     count = models.IntegerField(verbose_name="Количество")
     image = models.ImageField(upload_to='product_item_images', verbose_name='Картинка', null=True, blank=True)
-    date_created = models.DateTimeField(auto_created=True, verbose_name="Дата создания")
     who_added = models.ForeignKey(User, verbose_name="Пользователь добавивший", on_delete=models.CASCADE)
